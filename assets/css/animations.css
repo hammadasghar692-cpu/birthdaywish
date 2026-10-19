@@ -9,3 +9,10 @@
 .spark{position:absolute;font-size:var(--s);color:var(--glow);animation:twinkle var(--d) ease-in-out var(--delay) infinite}
 .heart{position:absolute;bottom:-40px;font-size:var(--s);color:#ff6b8b;opacity:.8;animation:rise var(--d) linear var(--delay) infinite}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;animation-delay:0s!important;transition-duration:.001ms!important;scroll-behavior:auto!important}.deco{display:none}.reveal{opacity:1;transform:none}}
+@keyframes swing{from{transform:rotate(-7deg)}to{transform:rotate(7deg)}}@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes cardIn{from{opacity:0;transform:translateX(-24px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(255,255,255,.0),0 6px 18px rgba(0,0,0,.2)}70%{box-shadow:0 0 0 18px rgba(255,120,160,0),0 6px 18px rgba(0,0,0,.2)}100%{box-shadow:0 0 0 0 rgba(255,120,160,0)}}
+@keyframes pulseGlow{to{transform:translateX(-50%) scale(1.25);opacity:.25}}
+.balloon{box-shadow:inset -8px -8px 14px rgba(0,0,0,.15),inset 8px 8px 12px rgba(255,255,255,.35);animation:rise var(--d) ease-in-out var(--delay) infinite,sway 3s ease-in-out infinite alternate}
+@keyframes sway{from{margin-left:-14px}to{margin-left:14px}}
+@media (prefers-reduced-motion:reduce){.rays{display:none}.wcard{opacity:1}}

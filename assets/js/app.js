@@ -24,12 +24,22 @@ WM.Fx=function(cv){var c=cv.getContext('2d'),ps=[],raf=0,W=0,H=0,dpr=Math.min(de
  clear:function(){ps=[]}};return api};
 WM.copy=function(t){return(navigator.clipboard&&window.isSecureContext?navigator.clipboard.writeText(t).then(function(){return true}):Promise.reject()).catch(function(){var a=document.createElement('textarea');a.value=t;a.style.cssText='position:fixed;opacity:0';document.body.appendChild(a);a.select();var ok=false;try{ok=document.execCommand('copy')}catch(e){}a.remove();return ok})};
 WM.waUrl=function(name,url){return'https://wa.me/?text='+encodeURIComponent('\uD83C\uDF82 A birthday surprise for '+name+' is waiting! Open it here: '+url)};
-/* Original synthesized melody (Web Audio): no audio files; starts only after a click. */
-WM.Music={ctx:null,t:0,on:false,start:function(){try{var A=window.AudioContext||window.webkitAudioContext;if(!A)return false;var self=this,n=[523,659,784,659,587,698,880,698,523,659,784,1047,988,784,659,587],i=0;this.ctx=this.ctx||new A();if(this.ctx.resume)this.ctx.resume();
- function play(){var c=self.ctx,o=c.createOscillator(),g=c.createGain(),t=c.currentTime;o.type='triangle';o.frequency.value=n[i++%n.length];g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.12,t+.04);g.gain.exponentialRampToValueAtTime(.0001,t+.45);o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+.5)}
- play();this.t=setInterval(play,420);this.on=true;return true}catch(e){return false}},stop:function(){clearInterval(this.t);this.on=false;return true},toggle:function(){return this.on?this.stop():this.start()}};
+/* Happy Birthday melody synthesized with Web Audio (no audio files). Browsers block sound before a user gesture, so auto() tries immediately and otherwise starts on the first tap/key. */
+WM.Music={ctx:null,t:0,on:false,master:null,
+S:[[392,.75],[392,.25],[440,1],[392,1],[523.25,1],[493.88,2],[392,.75],[392,.25],[440,1],[392,1],[587.33,1],[523.25,2],[392,.75],[392,.25],[784,1],[659.25,1],[523.25,1],[493.88,1],[440,2],[698.46,.75],[698.46,.25],[659.25,1],[523.25,1],[587.33,1],[523.25,2]],
+start:function(){try{var A=window.AudioContext||window.webkitAudioContext;if(!A)return false;var self=this,c=this.ctx=this.ctx||new A(),B=.55;if(c.resume)c.resume();
+ this.master=c.createGain();this.master.gain.value=.55;this.master.connect(c.destination);this.on=true;
+ function note(f,t,d){[[f,'triangle',.2],[f*2,'sine',.07],[f/2,'sine',.1]].forEach(function(v){var o=c.createOscillator(),g=c.createGain();o.type=v[1];o.frequency.value=v[0];g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v[2],t+.03);g.gain.exponentialRampToValueAtTime(.0001,t+d+.25);o.connect(g);g.connect(self.master);o.start(t);o.stop(t+d+.3)})}
+ function loop(){if(!self.on)return;var t=c.currentTime+.05;self.S.forEach(function(n){note(n[0],t,n[1]*B*.95);t+=n[1]*B});self.t=setTimeout(loop,(t-c.currentTime+1.2)*1000)}
+ loop();return true}catch(e){this.on=false;return false}},
+stop:function(){this.on=false;clearTimeout(this.t);if(this.master){try{this.master.gain.value=0;this.master.disconnect()}catch(e){}}return true},
+auto:function(cb){var self=this,ev=['pointerdown','keydown','touchstart'];function off(){ev.forEach(function(e){removeEventListener(e,go,true)})}
+ function go(){off();if(!self.on)self.start();cb&&cb()}
+ try{var A=window.AudioContext||window.webkitAudioContext;if(!A)return;this.ctx=this.ctx||new A();if(this.ctx.state==='running'){this.start();cb&&cb();return}}catch(e){}
+ ev.forEach(function(e){addEventListener(e,go,true)})}};
+WM.bunting=function(box,cols){box.replaceChildren();for(var i=0;i<16;i++){var f=WM.el('span');f.style.setProperty('--c',cols[i%cols.length]);f.style.setProperty('--delay',(i%5)*.3+'s');box.appendChild(f)}};
 document.addEventListener('DOMContentLoaded',function(){var y=document.getElementById('year');if(y)y.textContent=new Date().getFullYear();
- var h=document.getElementById('heroDeco');if(h)WM.deco(h,'party',['balloons','sparkles']);
+ var bn=document.getElementById('bunting');if(bn&&!document.getElementById('st-welcome'))WM.bunting(bn,WM.THEMES.party.colors);var h=document.getElementById('heroDeco');if(h)WM.deco(h,'party',['balloons','sparkles']);
  var g=document.getElementById('themeGrid');if(g)Object.keys(WM.THEMES).forEach(function(id){var t=WM.THEMES[id],a=WM.el('a','tcard panel');a.href='create.html?theme='+id;WM.theme(a,id);
   a.appendChild(WM.el('strong','glow',t.name));a.appendChild(WM.el('span','',id==='romantic'?'With all my heart, happy birthday':'Happy Birthday!'));var s=WM.el('span','sw');t.colors.forEach(function(c){var d=WM.el('i');d.style.background=c;s.appendChild(d)});a.appendChild(s);a.setAttribute('aria-label','Use the '+t.name+' theme');g.appendChild(a)});
  var rv=document.querySelectorAll('.reveal');if('IntersectionObserver'in window&&!WM.reduced){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.15});rv.forEach(function(e){io.observe(e)})}else rv.forEach(function(e){e.classList.add('in')})});})();

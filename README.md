@@ -12,12 +12,12 @@ Static birthday-surprise generator: HTML, CSS, vanilla JS, SVG. No backend, data
 - `assets/images/` original SVG artwork
 
 ## How links work
-`surprise.html?d=<Base64URL(JSON)>`. The JSON holds sender, recipient, message, theme, effects, optional date, schedule flag and music flag. The page decodes it, re-validates every field (length limits, allowed themes/effects, valid date), and renders text with `textContent` only. Links over 2000 characters are refused with a message (with the current field limits a link tops out around 1,700 characters, so this guard is a safety net).
+`surprise.html?d=<Base64URL(JSON)>`. The JSON holds sender, recipient, message, theme, effects, optional date, schedule flag and music flag. The page decodes it, re-validates every field (length limits, allowed themes/effects, valid date), and renders text with `textContent` only. Links over 3000 characters are refused with a message (with the current field limits a link tops out around 2,500 characters, so this guard is a safety net).
 
 ## Honest limitations
 - Links are **not private or encrypted**; anyone with a link can read it. Nothing is stored on a server, so WishMagic cannot list, edit or recover links.
 - The midnight countdown uses the *recipient's device clock and time zone*. It works only while the page is open; it cannot send notifications or WhatsApp messages. It is not a lock: anyone can decode the link or change their clock.
-- Music is a short original tune synthesized with Web Audio. It starts only on a click; browsers without Web Audio, or blocking it, show a message. No audio files are shipped.
+- Music is a Happy Birthday melody synthesized with Web Audio (no audio files shipped). The page tries to autoplay it; browsers block sound before a user gesture, so it otherwise starts on the visitor's first tap or key press, and a small button mutes it. The melody is traditional; the song is public domain in the US, but check rules in your own country if you publish commercially.
 - WhatsApp sharing opens `wa.me` with a URL-encoded message; the user sends it manually.
 - Social previews: Open Graph tags are included, but platforms cache and decide previews themselves. Personalised previews are impossible without a server.
 - Fonts are system fonts, so typography varies slightly by device.
